@@ -1,4 +1,4 @@
-package dto
+package models
 
 type Album struct {
 	ID     string  `json:"id"`
