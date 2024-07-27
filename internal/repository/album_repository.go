@@ -36,10 +36,26 @@ func (r *AlbumRepository) FindAll() []models.Album {
 	return result
 }
 
-func (r *AlbumRepository) FindById(id string) models.Album {
-	return models.Album{}
+func (r *AlbumRepository) FindById(id int64) (models.Album, error) {
+	var alb models.Album
+
+	row := r.db.QueryRow("SELECT * FROM album where id = ?", id)
+	if err := row.Scan(&alb.ID, &alb.Title, &alb.Artist, &alb.Price); err != nil {
+		if err == sql.ErrNoRows {
+			return alb, fmt.Errorf("No album found for id %d", id)
+		}
+		return alb, fmt.Errorf("albumsById: %d: %v", id, err)
+	}
+
+	return alb, nil
 }
 
-func (r *AlbumRepository) InsertAlbum(album *models.Album) {
+func (r *AlbumRepository) InsertAlbum(album *models.Album) error {
+	_, err := r.db.Exec("INSERT INTO album (title, artist, price) VALUES ($1, $2, $3)", album.Title, album.Artist, album.Price)
+	if err != nil {
+		fmt.Println("Error while adding album", err)
+		return err
+	}
 
+	return nil
 }

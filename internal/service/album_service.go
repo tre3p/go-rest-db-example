@@ -17,10 +17,10 @@ func (as *AlbumService) GetAlbums() []models.Album {
 	return as.albumRepo.FindAll()
 }
 
-func (as *AlbumService) GetAlbum(id string) models.Album {
+func (as *AlbumService) GetAlbum(id int64) (models.Album, error) {
 	return as.albumRepo.FindById(id)
 }
 
-func (as *AlbumService) AddAlbum(album *models.Album) {
-	as.albumRepo.InsertAlbum(album)
+func (as *AlbumService) AddAlbum(album *models.Album) error {
+	return as.albumRepo.InsertAlbum(album)
 }

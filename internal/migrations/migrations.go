@@ -26,7 +26,11 @@ func RunDbMigrations(db *sql.DB) {
 
 	err = m.Up()
 	if err != nil {
-		fmt.Println("Error while running migrations", err)
+		if err.Error() != "no change" {
+			fmt.Println("Error while running migrations", err)
+		} else {
+			fmt.Println("No migrations to run")
+		}
 	}
 
 	fmt.Println("Migrations ran")

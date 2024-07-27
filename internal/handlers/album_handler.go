@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 type AlbumHandler struct {
@@ -26,10 +27,18 @@ func (ah *AlbumHandler) GetAlbums(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, ah.albumService.GetAlbums())
 }
 
-func (ah *AlbumHandler) GetAlbumById(id string) *models.Album {
-	//album := ah.albumService.GetAlbum(id)
+func (ah *AlbumHandler) GetAlbumById(c *gin.Context) {
+	id_int, _ := strconv.Atoi(c.Param("id"))
+	id := int64(id_int)
 
-	return &models.Album{}
+	album, err := ah.albumService.GetAlbum(id)
+
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, models.Error{err.Error()})
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, album)
 }
 
 func (ah *AlbumHandler) PostAlbum(c *gin.Context) {
@@ -40,6 +49,10 @@ func (ah *AlbumHandler) PostAlbum(c *gin.Context) {
 		return
 	}
 
-	albums = append(albums, newAlbum)
+	err := ah.albumService.AddAlbum(&newAlbum)
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, models.Error{err.Error()})
+		return
+	}
 	c.IndentedJSON(http.StatusCreated, newAlbum)
 }
