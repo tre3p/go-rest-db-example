@@ -1,0 +1,14 @@
+version: '3.9'
+
+services:
+  pg-db:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_PASSWORD:-album}
+      PGDATA: /data/postgres
+    volumes:
+      - ./pg-volume:/data/postgres
